@@ -1,0 +1,8 @@
+transport: stdio
+timeout_seconds: 15
+max_retries: 2
+retry_backoff_seconds: 0.5
+servers:
+  read: casepilot.mcp.read_server
+  action: casepilot.mcp.action_server
+bridge: authenticated_episode_scoped_json_ipc

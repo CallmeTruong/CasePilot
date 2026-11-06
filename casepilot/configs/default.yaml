@@ -1,0 +1,25 @@
+experiment_id: phase0
+config_id: casepilot_single_native
+track: custom
+split: development
+architecture: single
+tool_backend: native
+policy_access: full
+memory: M0
+fault_injection: false
+model: openai/gpt-6-luna
+user_model: openai/gpt-6-luna
+judge_model: openai/responses/gpt-6-luna
+seed: 42
+trials: 1
+llm_retries: 2
+budgets:
+  max_graph_steps: 40
+  max_replans: 2
+  max_tokens: 128000
+  max_retrieval_rounds: 2
+mcp:
+  transport: stdio
+  timeout_seconds: 15
+  max_retries: 2
+  retry_backoff_seconds: 0.5

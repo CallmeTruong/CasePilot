@@ -1,0 +1,15 @@
+experiment_id: E3-control
+track: custom
+base_config: configs/default.yaml
+trials: 1
+fault_dataset: datasets/fault_cases/scenarios.jsonl
+variants:
+  - config_id: S0_control
+    recovery_strategy: S0
+    fault_injection: false
+  - config_id: S1_control
+    recovery_strategy: S1
+    fault_injection: false
+  - config_id: S2_control
+    recovery_strategy: S2
+    fault_injection: false

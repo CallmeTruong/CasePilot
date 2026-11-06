@@ -1,0 +1,6 @@
+{
+  "E1": {
+    "runs": ["5533ddc7760f440f90d805d7660b5585", "5ec60f32927444048be4a34dd1ecfd80"],
+    "note": "These development runs were launched with CLI default experiment_id=phase0. E1 is an explicit analysis grouping; raw artifacts are preserved."
+  }
+}

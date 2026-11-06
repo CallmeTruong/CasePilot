@@ -1,0 +1,15 @@
+experiment_id: E1
+track: custom
+base_config: configs/default.yaml
+trials: 3
+variants:
+  - config_id: single_native_full
+    architecture: single
+  - config_id: multi_native_full
+    architecture: multi
+controls:
+  manifest: configs/benchmark-manifest.json
+  split: development
+  tool_backend: native
+  policy_access: full
+  judge_model: openai/responses/gpt-6-luna

@@ -1,0 +1,33 @@
+architecture: single
+budgets:
+  max_graph_steps: 40
+  max_replans: 2
+  max_retrieval_rounds: 2
+  max_tokens: 128000
+checkpointing: true
+config_id: mcp_F2_reconciliation
+experiment_id: demo
+fault_injection: true
+fault_target: exchange_delivered_order_items
+fault_trigger_attempt: 1
+fault_type: F2
+judge_model: openai/responses/gpt-6-luna
+llm_retries: 2
+mcp:
+  max_retries: 2
+  retry_backoff_seconds: 0.5
+  timeout_seconds: 15.0
+  transport: stdio
+memory: M0
+model: openai/gpt-6-luna
+policy_access: full
+recovery_strategy: S2
+scenario_id: null
+seed: 42
+split: development
+task_ids:
+- '0'
+tool_backend: mcp
+track: custom
+trials: 1
+user_model: openai/gpt-6-luna

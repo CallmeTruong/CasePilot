@@ -1,0 +1,16 @@
+experiment_id: E2
+track: custom
+base_config: configs/default.yaml
+trials: 3
+component_dataset: datasets/rag_eval/queries.jsonl
+variants:
+  - config_id: full_policy
+    policy_access: full
+  - config_id: sparse
+    policy_access: bm25
+  - config_id: dense
+    policy_access: dense
+  - config_id: hybrid
+    policy_access: hybrid
+  - config_id: reranked
+    policy_access: hybrid_rerank

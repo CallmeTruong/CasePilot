@@ -1,0 +1,14 @@
+experiment_id: E4
+track: custom
+base_config: configs/default.yaml
+trials: 3
+memory_dataset: datasets/memory_cases/scenarios.jsonl
+variants:
+  - config_id: no_history
+    memory: M0
+  - config_id: structured_history
+    memory: M1
+controls:
+  architecture: single
+  tool_backend: native
+  policy_access: full

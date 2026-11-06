@@ -1,0 +1,8 @@
+base_config: configs/default.yaml
+component_dataset: datasets/rag_eval/queries.jsonl
+experiment_id: E2
+track: custom
+trials: 3
+variants:
+- config_id: reranked
+  policy_access: hybrid_rerank

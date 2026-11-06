@@ -1,0 +1,6 @@
+architectures:
+  single: single_agent
+  multi: planner_executor
+verifier: deterministic
+planner_tools: []
+policy_gate: shared

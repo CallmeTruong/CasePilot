@@ -1,0 +1,14 @@
+base_config: configs/default.yaml
+controls:
+  architecture: single
+  policy_access: full
+  tool_backend: native
+experiment_id: E3
+fault_dataset: datasets/fault_cases/scenarios.jsonl
+scenario_ids:
+- FAULT_0_F3_42
+track: custom
+trials: 1
+variants:
+- config_id: S2
+  recovery_strategy: S2

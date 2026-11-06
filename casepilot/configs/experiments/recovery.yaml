@@ -1,0 +1,16 @@
+experiment_id: E3
+track: custom
+base_config: configs/default.yaml
+trials: 1
+fault_dataset: datasets/fault_cases/scenarios.jsonl
+variants:
+  - config_id: S0
+    recovery_strategy: S0
+  - config_id: S1
+    recovery_strategy: S1
+  - config_id: S2
+    recovery_strategy: S2
+controls:
+  architecture: single
+  tool_backend: native
+  policy_access: full
