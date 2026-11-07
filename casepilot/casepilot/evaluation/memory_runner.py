@@ -9,7 +9,8 @@ from casepilot.config import RunConfig, load_provider_settings
 from casepilot.integration.baseline import _save, provider_environment
 from casepilot.integration.benchmark import load_manifest, prepare_runtime, sha256_file
 from casepilot.memory.episodic import HistoryStore
-from casepilot.observability.telemetry import TraceContext, TraceSink, redact
+from casepilot.observability.events import redact
+from casepilot.observability.telemetry import TraceContext, TraceSink
 
 
 def _session(
@@ -28,8 +29,8 @@ def _session(
 ):
     from tau2.data_model.message import UserMessage
 
-    from casepilot.integration.tau2_agent import CasePilotAgent
-    from casepilot.integration.tool_adapter import GuardedEnvironment
+    from casepilot.integration.tau2.benchmark_agent import CasePilotAgent
+    from casepilot.integration.tau2.dispatcher import GuardedEnvironment
     from casepilot.memory.checkpoint import CheckpointManager
 
     episode = uuid.uuid4().hex

@@ -1,0 +1,11 @@
+# Third-party source is downloaded by the application bootstrap.
+/.dependencies/
+
+# Local tooling and private/generated files.
+.env
+.env.*
+!.env.example
+.cache/
+.venv/
+__pycache__/
+*.py[cod]

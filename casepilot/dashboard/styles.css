@@ -1,0 +1,35 @@
+@import url('https://fonts.googleapis.com/css2?family=Be+Vietnam+Pro:wght@400;500;600;700&display=swap');
+:root { --ink:#25394a; --muted:#647688; --accent:#167866; }
+.stApp { background:#f3f5f8; color:var(--ink); font-family:'Be Vietnam Pro',sans-serif; }
+.stMainBlockContainer { max-width:1800px; padding:1.5rem 2rem 2rem; }
+#MainMenu, .stDeployButton, [data-testid="stToolbar"] { display:none; }
+[data-testid="stHeader"] { height:0; background:transparent; pointer-events:none; }
+h1 { font-size:1.55rem!important; letter-spacing:-.04em; padding:.2rem 0!important; }
+h3 { font-size:1.08rem!important; color:var(--ink); }
+[data-testid="stCaptionContainer"] p { color:#607083; font-size:.74rem; }
+.st-key-database_panel, .st-key-chat_panel { background:white; border-radius:14px; padding:1.1rem; border:1px solid #dce3eb; }
+.st-key-chat_panel { min-height:640px; }
+.st-key-database_panel [data-testid="stVerticalBlock"] { gap:.55rem; }
+[data-testid="stChatMessage"] { background:#f5f7fa; padding:.8rem; border-radius:10px; }
+[data-testid="stText"] { white-space:pre-wrap; overflow-wrap:anywhere; font-size:.8rem; line-height:1.7; }
+[data-testid="stMetricValue"] { font-size:1.5rem; font-weight:600; }
+[data-testid="stMetricLabel"] { font-size:.72rem; }
+.stButton button { border-radius:8px; min-height:38px; font-size:.78rem; }
+.stButton button[kind="primary"] { background:var(--accent); border-color:var(--accent); }
+button:focus-visible, textarea:focus-visible, input:focus-visible { outline:3px solid #de9f31!important; outline-offset:2px; }
+.st-key-mobile_switch { display:none; }
+[data-testid="stJson"] { max-width:100%; overflow:auto; }
+@media(min-width:769px) {
+  [data-testid="stColumn"]:has(.st-key-chat_panel) { position:sticky; top:1rem; align-self:flex-start; max-height:calc(100vh - 2rem); overflow-y:auto; }
+}
+@media(max-width:768px) {
+  .stMainBlockContainer { padding:1rem .75rem; }
+  .st-key-mobile_switch { display:block; }
+  [data-testid="stHorizontalBlock"] { flex-wrap:wrap; }
+  [data-testid="stColumn"]:has(.st-key-database_panel), [data-testid="stColumn"]:has(.st-key-chat_panel) { width:100%!important; min-width:0!important; flex:1 1 100%!important; }
+  .st-key-database_panel, .st-key-chat_panel { padding:.6rem; }
+  h1 { font-size:1.2rem!important; }
+  [data-testid="stMetricValue"] { font-size:1.1rem; }
+  .st-key-browser_counts [data-testid="stHorizontalBlock"] { display:grid; grid-template-columns:repeat(2,minmax(0,1fr)); }
+  .st-key-browser_counts [data-testid="stColumn"] { width:100%!important; min-width:0!important; }
+}

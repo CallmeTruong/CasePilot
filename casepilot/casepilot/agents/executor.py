@@ -18,7 +18,7 @@ class Executor:
         self.call_model = call_model
 
     def propose(self, state, messages, tools, plan):
-        from tau2.data_model.message import SystemMessage
+        from casepilot.messages import SystemMessage
 
         instruction = SystemMessage(
             role="system",

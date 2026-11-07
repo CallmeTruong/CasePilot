@@ -1,0 +1,68 @@
+[build-system]
+requires = ["hatchling>=1.27,<2"]
+build-backend = "hatchling.build"
+
+[project]
+name = "casepilot-lite"
+version = "0.1.0"
+description = "Reproducible, policy-aware Retail agent experiments"
+readme = "README.md"
+requires-python = ">=3.12,<3.13"
+dependencies = [
+  "pydantic>=2.11,<3",
+  "pyyaml>=6.0,<7",
+  "python-dotenv>=1.1,<2",
+  "tau2==2.0.0",
+  "langgraph>=1.0,<2",
+  "rank-bm25>=0.2.2,<1",
+  "sentence-transformers>=3,<6",
+  "faiss-cpu>=1.10,<2",
+  "torch>=2.6,<3",
+  "mcp>=1.9,<2",
+  "streamlit>=1.40,<2",
+  "opentelemetry-sdk>=1.30,<2",
+  "opentelemetry-exporter-otlp-proto-http>=1.30,<2",
+  "langgraph-checkpoint-sqlite>=2,<4",
+  "matplotlib>=3.9,<4",
+  "langchain-core>=1.0,<2",
+  "langchain-openai>=1.0,<2",
+  "langsmith>=0.4,<1",
+]
+
+[tool.uv.sources]
+tau2 = { path = "../.dependencies/tau2-033bf082f48e", editable = true }
+torch = [{ index = "pytorch-cpu", marker = "sys_platform != 'darwin'" }]
+
+[[tool.uv.index]]
+name = "pytorch-cpu"
+url = "https://download.pytorch.org/whl/cpu"
+explicit = true
+
+[dependency-groups]
+dev = [
+    "pytest>=8.3,<10",
+    "ruff>=0.11,<1",
+]
+security = [
+    "giskard[openai,scan]==3.0.1",
+]
+
+[tool.hatch.build.targets.wheel]
+packages = ["casepilot", "dashboard"]
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+addopts = "-ra --strict-markers"
+markers = [
+  "integration: real pinned Retail environment, without provider calls",
+  "live: requires explicit opt-in, provider credentials and incurs LLM costs",
+  "models: loads pinned local embedding and cross-encoder models",
+]
+
+[tool.ruff]
+target-version = "py312"
+line-length = 100
+extend-exclude = [".specify", ".agents"]
+
+[tool.ruff.lint]
+select = ["E", "F", "I", "UP", "B"]

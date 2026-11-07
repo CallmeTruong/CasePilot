@@ -24,7 +24,7 @@ class CheckpointManager:
         self.connection.commit()
         allowed = [("casepilot.agents.state", name) for name in ("CaseState", "Confirmation")]
         allowed += [
-            ("tau2.data_model.message", name)
+            ("casepilot.messages", name)
             for name in ("AssistantMessage", "UserMessage", "ToolMessage", "MultiToolMessage")
         ]
         serde = JsonPlusSerializer(
@@ -73,7 +73,8 @@ class CheckpointManager:
             raise ValueError("Checkpoint integrity mismatch")
         state = CaseState.model_validate_json(row["state_json"])
         from pydantic import TypeAdapter
-        from tau2.data_model.message import Message, ToolMessage
+
+        from casepilot.messages import Message, ToolMessage
 
         state.messages = TypeAdapter(list[Message]).validate_python(
             json.loads(row["state_json"])["messages"]

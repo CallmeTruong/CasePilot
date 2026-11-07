@@ -6,12 +6,13 @@ import uuid
 from copy import deepcopy
 from weakref import finalize
 
+from langsmith import tracing_context
+
 from casepilot.agents.state import fingerprint as operation_fingerprint
 from casepilot.customer.activity import ActivityRecorder
 from casepilot.customer.language import fallback_language, localize
 from casepilot.customer.observability import SessionTrace
 from casepilot.customer.views import customer_text
-from casepilot.integration.baseline import provider_environment
 from casepilot.security.guards import (
     SCOPE_MESSAGE,
     SECURITY_MESSAGE,
@@ -175,7 +176,7 @@ class CustomerSession:
             if approve:
                 self._run("yes", on_activity=on_activity)
             else:
-                from tau2.data_model.message import UserMessage
+                from casepilot.messages import UserMessage
 
                 self.agent.engine.gate.observe_user("no", self.state)
                 self.state.messages.append(UserMessage(role="user", content="no"))
@@ -192,7 +193,7 @@ class CustomerSession:
                 )
 
     def _run(self, text, *, on_activity=None):
-        from tau2.data_model.message import UserMessage
+        from casepilot.messages import UserMessage
 
         incoming = UserMessage(role="user", content=text)
         self.observer.begin(on_activity)
@@ -210,7 +211,7 @@ class CustomerSession:
         before_errors = len(self.state.errors)
         outcome = None
         try:
-            with provider_environment(self.settings):
+            with tracing_context(enabled=False):
                 for _ in range(self.agent.config.budgets.max_graph_steps):
                     reply, self.state = self.agent.generate_next_message(incoming, self.state)
                     if not reply.tool_calls:
@@ -242,7 +243,7 @@ class CustomerSession:
                         "tool", call.name, arguments=call.arguments, operation_id=call.id
                     )
                     tool_started = time.perf_counter()
-                    incoming = self.environment.get_response(call)
+                    incoming = self.environment.execute(call)
                     self.observer.finish(
                         activity, "error" if incoming.error else "success", result=incoming.content
                     )

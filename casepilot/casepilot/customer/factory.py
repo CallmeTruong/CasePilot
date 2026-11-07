@@ -4,7 +4,7 @@ import uuid
 from pathlib import Path
 
 from casepilot.config import RunConfig, load_config, load_provider_settings
-from casepilot.integration.benchmark import load_manifest, prepare_runtime
+from casepilot.integration.benchmark import load_manifest
 
 CUSTOMER_INSTRUCTION = """You are speaking directly with a real person in a customer support demo.
 Reply naturally in the language used by the user. Honor an explicit request to change the response
@@ -39,20 +39,19 @@ text instead of proposing the action; the card is the required confirmation step
 def create_session():
     from loguru import logger
 
+    from casepilot.agents.agent import Agent
     from casepilot.customer.session import CustomerSession
-    from casepilot.integration.tau2_agent import CasePilotAgent
-    from casepilot.integration.tool_adapter import GuardedEnvironment
+    from casepilot.integration.tau2.backend import RetailBackend, load_retail_environment
+    from casepilot.integration.tau2.dispatcher import GuardedEnvironment
+    from casepilot.integration.tau2.tools import describe_tools
+    from casepilot.llm.openai_chat_adapter import OpenAIChatAdapter
     from casepilot.memory.checkpoint import CheckpointManager
 
     root = Path(__file__).resolve().parents[2]
     path = root / "configs/benchmark-manifest.json"
     manifest = load_manifest(path)
-    prepare_runtime(manifest, path)
-    from tau2.domains.retail.environment import get_environment
-    from tau2.utils.llm_utils import set_llm_log_dir
 
     logger.remove()
-    set_llm_log_dir(None)
     settings = load_provider_settings(root / ".env")
     config = RunConfig.model_validate(
         load_config(root / "configs/default.yaml").model_dump()
@@ -82,17 +81,18 @@ def create_session():
         else None
     )
     try:
-        env = get_environment()
-        agent = CasePilotAgent(
-            env.get_tools(),
+        env = load_retail_environment(path)
+        agent = Agent(
+            describe_tools(env.get_tools()),
             env.get_policy(),
             config,
             episode_id=episode,
             customer_instruction=CUSTOMER_INSTRUCTION,
             checkpoint_manager=checkpoint,
+            generate=OpenAIChatAdapter(settings),
         )
         wrapper = GuardedEnvironment(env, agent, journal_path=folder / "operations.sqlite3")
-        return CustomerSession(agent, wrapper, settings)
+        return CustomerSession(agent, RetailBackend(wrapper), settings)
     except Exception:
         if checkpoint:
             checkpoint.close()

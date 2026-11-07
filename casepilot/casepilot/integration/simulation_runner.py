@@ -20,8 +20,8 @@ def validate_casepilot_config(config: RunConfig):
 def make_casepilot_orchestrator(
     config, task, *, seed, simulation_id, trace=None, benchmark_revision=None
 ):
-    from casepilot.integration.tau2_agent import CasePilotAgent
-    from casepilot.integration.tool_adapter import GuardedEnvironment
+    from casepilot.integration.tau2.benchmark_agent import CasePilotAgent
+    from casepilot.integration.tau2.dispatcher import GuardedEnvironment
 
     orchestrator = make_upstream_orchestrator(config, task, seed=seed, simulation_id=simulation_id)
     context = PublicRetailContext.from_environment(orchestrator.environment)

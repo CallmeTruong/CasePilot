@@ -31,12 +31,13 @@ class SingleAgentGraph:
         memory_scope=None,
         customer_instruction=None,
     ):
-        from tau2.utils.llm_utils import generate as upstream_generate
+        from casepilot.llm.openai_chat_adapter import OpenAIChatAdapter
 
         self.tools = tools
         self.policy = policy
         self.config = config
-        self.generate = generate or upstream_generate
+        self.generate = generate or OpenAIChatAdapter()
+        self._model_resource = self.generate
         self.trace = trace
         self.checkpointer = checkpointer
         self.customer_instruction = customer_instruction
@@ -68,7 +69,7 @@ class SingleAgentGraph:
             self.trace.emit(event, **fields)
 
     def observe(self, turn: Turn):
-        from tau2.data_model.message import MultiToolMessage, ToolMessage, UserMessage
+        from casepilot.messages import MultiToolMessage, ToolMessage, UserMessage
 
         state, incoming = turn["case"], turn["incoming"]
         messages = incoming.tool_messages if isinstance(incoming, MultiToolMessage) else [incoming]
@@ -110,7 +111,7 @@ class SingleAgentGraph:
         return {"case": state}
 
     def prompt(self, state: CaseState):
-        from tau2.data_model.message import SystemMessage
+        from casepilot.messages import SystemMessage
 
         # Start on a user turn to avoid orphaned tool responses when truncating history.
         history = state.messages
@@ -210,6 +211,9 @@ class SingleAgentGraph:
                 call_name=f"casepilot_{role}",
                 **kwargs,
             )
+            from casepilot.messages import normalize_message
+
+            reply = normalize_message(reply)
             usage = reply.usage or {}
             input_tokens = usage.get("prompt_tokens", usage.get("input_tokens"))
             output_tokens = usage.get("completion_tokens", usage.get("output_tokens"))
@@ -234,7 +238,7 @@ class SingleAgentGraph:
             )
 
     def decide(self, turn: Turn):
-        from tau2.data_model.message import AssistantMessage, ToolCall
+        from casepilot.messages import AssistantMessage, ToolCall
 
         state = turn["case"]
         if (
@@ -270,7 +274,7 @@ class SingleAgentGraph:
         return {"reply": reply, "case": state}
 
     def verify(self, turn: Turn):
-        from tau2.data_model.message import AssistantMessage
+        from casepilot.messages import AssistantMessage
 
         state, reply = turn["case"], turn["reply"]
         calls = reply.tool_calls or []
@@ -321,8 +325,22 @@ class SingleAgentGraph:
         return {"case": state, "reply": reply}
 
     def invoke(self, message, state: CaseState):
+        from langsmith import tracing_context
+
+        from casepilot.messages import normalize_message
+
+        message = normalize_message(message)
+        with tracing_context(enabled=False):
+            return self._invoke(message, state)
+
+    def _invoke(self, message, state):
         result = self.graph.invoke(
             {"case": state, "incoming": message, "reply": None},
             config={"configurable": {"thread_id": state.episode_id}},
         )
         return result["reply"], result["case"]
+
+    def close(self):
+        close = getattr(self._model_resource, "close", None)
+        if close is not None:
+            close()

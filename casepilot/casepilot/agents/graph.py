@@ -96,7 +96,7 @@ class MultiAgentGraph(SingleAgentGraph):
         return {"case": state}
 
     def decide(self, turn):
-        from tau2.data_model.message import AssistantMessage
+        from casepilot.messages import AssistantMessage
 
         state = turn["case"]
         if state.required_refresh_order_ids and self.config.recovery_strategy == "S2":

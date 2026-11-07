@@ -17,7 +17,8 @@ from casepilot.integration.benchmark import (
     sha256_file,
 )
 from casepilot.models import ExperimentRun, MetricRecord
-from casepilot.observability.telemetry import TraceContext, TraceSink, redact
+from casepilot.observability.events import redact
+from casepilot.observability.telemetry import TraceContext, TraceSink
 
 _ENV_LOCK = threading.RLock()
 

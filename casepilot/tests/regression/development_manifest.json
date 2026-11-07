@@ -1,0 +1,5 @@
+{
+  "benchmark_revision": "033bf082f48e4a3c6a1256208e93cf2ce9c3bb6f",
+  "upstream_split": "train",
+  "task_ids": ["0", "1", "2"]
+}

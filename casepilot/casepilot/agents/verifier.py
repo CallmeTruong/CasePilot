@@ -9,6 +9,7 @@ from jsonschema import Draft202012Validator, ValidationError
 
 from casepilot.agents.state import CaseState, Confirmation, fingerprint
 from casepilot.security.guards import validate_calculation
+from casepilot.tools.definitions import tool_schema
 
 IDENTITY_TOOLS = frozenset({"find_user_id_by_email", "find_user_id_by_name_zip"})
 MUTATION_TOOLS = frozenset(
@@ -40,7 +41,7 @@ class PolicyGate:
         tool = self.tools.get(name)
         if tool is None:
             return False
-        schema = dict(tool.openai_schema["function"]["parameters"])
+        schema = dict(tool_schema(tool)["function"]["parameters"])
         schema["additionalProperties"] = False
         return Draft202012Validator(schema).is_valid(args)
 
@@ -49,7 +50,7 @@ class PolicyGate:
         if tool is None:
             return GateResult(False, "schema", "This action is not available.")
         try:
-            schema = dict(tool.openai_schema["function"]["parameters"])
+            schema = dict(tool_schema(tool)["function"]["parameters"])
             schema["additionalProperties"] = False
             Draft202012Validator(schema).validate(args)
         except ValidationError:

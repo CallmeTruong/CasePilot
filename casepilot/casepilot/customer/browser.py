@@ -25,7 +25,7 @@ def load_initial() -> dict:
 def snapshot(session=None) -> dict:
     environment = getattr(session, "environment", None)
     if environment is not None and not session.closed:
-        return environment.tools.db.model_dump(mode="json")
+        return environment.snapshot()
     return load_initial()
 
 

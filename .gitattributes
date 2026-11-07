@@ -1,0 +1,2 @@
+# The benchmark manifest verifies this file's exact bytes.
+casepilot/configs/benchmark-files.json -text whitespace=cr-at-eol

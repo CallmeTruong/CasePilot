@@ -1,0 +1,38 @@
+services:
+  dashboard:
+    build: .
+    env_file: .env
+    ports: ["127.0.0.1:8501:8501"]
+    environment:
+      OTEL_EXPORTER_OTLP_TRACES_ENDPOINT: http://phoenix:6006/v1/traces
+    volumes:
+      - ./results:/workspace/casepilot/results
+      - casepilot-cache:/workspace/casepilot/.cache
+      - model-cache:/root/.cache/huggingface
+  runner:
+    build: .
+    profiles: ["runner"]
+    env_file: .env
+    volumes:
+      - ./results:/workspace/casepilot/results
+      - casepilot-cache:/workspace/casepilot/.cache
+      - model-cache:/root/.cache/huggingface
+    command: ["uv", "run", "--no-sync", "python", "scripts/run_casepilot.py", "--manifest", "configs/benchmark-manifest.json", "--config", "configs/default.yaml", "--output", "results/docker"]
+  research:
+    build: .
+    profiles: ["research"]
+    env_file: .env
+    ports: ["127.0.0.1:8502:8502"]
+    volumes:
+      - ./results:/workspace/casepilot/results
+      - casepilot-cache:/workspace/casepilot/.cache
+      - model-cache:/root/.cache/huggingface
+    command: ["uv", "run", "--no-sync", "streamlit", "run", "dashboard/research_app.py", "--server.address=0.0.0.0", "--server.port=8502"]
+  phoenix:
+    image: arizephoenix/phoenix:latest
+    ports: ["127.0.0.1:6006:6006"]
+    volumes: ["phoenix-data:/mnt/data"]
+volumes:
+  casepilot-cache:
+  model-cache:
+  phoenix-data:
